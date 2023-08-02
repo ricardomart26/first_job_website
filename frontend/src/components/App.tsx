@@ -107,7 +107,7 @@ function App() {
     <JobsComponent jobs={jobs} searchInput={searchInput}/>
     
     {/* <TextField multiline variant="outlined" onChange={jobDescription}>Description...</TextField> */}
-      <Dialog aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" open={open} onClose={handleClose} sx={width}>
+      <Dialog aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" open={open} onClose={handleClose}>
           <DialogTitle id="alert-dialog-title">{"Post a job"}</DialogTitle>
           <form action='/' method='POST'>
             <Stack spacing={4} width={400} margin={5}>
