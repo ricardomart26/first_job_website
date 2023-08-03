@@ -1,10 +1,11 @@
 
-import { AppBar, Button, IconButton, InputAdornment, MenuItem, Select, TextField, Toolbar } from '@material-ui/core';
-import { Stack, ToggleButton, ToggleButtonGroup, Dialog, Alert } from '@mui/material';
+import { AppBar, Button, InputAdornment, MenuItem, Select, TextField, Toolbar } from '@material-ui/core';
+import { Stack, ToggleButton, ToggleButtonGroup, Dialog, Alert, IconButton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import JobsComponent from './Jobs';
 import { Job, ProgLan } from './interfaces';
+import CloseIcon from '@mui/icons-material/Close';
 
 // import DialogActions from '@mui/material/DialogActions';
 // import DialogContent from '@mui/material/DialogContent';
@@ -124,8 +125,6 @@ function App() {
     setMinSalaryInput(minSalary);
   };
 
-  // TODO: Check if salary is a number
-  // TODO: Check if max salary is bigger than max salary
   const handleMaxSalaryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     
     if (Number.isNaN(e.target.value))
@@ -155,7 +154,6 @@ function App() {
   //   setFormats(newFormats);
   // };
 
-
   return (
   <div>
     <AppBar position='static' style={{marginBottom: 30}}>
@@ -179,6 +177,16 @@ function App() {
     {/* <TextField multiline variant="outlined" onChange={jobDescription}>Description...</TextField> */}
     <Dialog aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" open={open} onClose={handleClose}>
         <DialogTitle id="alert-dialog-title">{"Post a job"}</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+          }}>
+          <CloseIcon />
+        </IconButton>
         <form action='http://localhost:3005/jobs' method='POST'>
           <Stack spacing={4} width={400} margin={5}>
             <TextField required variant='outlined' id="outlined-required" label="Job title" placeholder="Software developer" onChange={(e) => setJobTitleInput(e.target.value)} value={jobTitleInput}/>
