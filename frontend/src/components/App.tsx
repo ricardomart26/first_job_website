@@ -26,13 +26,9 @@ function App() {
   const [languages, setLanguages] = useState<string[]>(["C", "Cpp", "Java", "Python", "Javascript", "Kotlin"]);
   const [jobTitleInput, setJobTitleInput] = useState<string>('');
   const [jobDescriptionInput, setJobDescriptionInput] = useState<string>('');
+  const [minSalaryInput, setMinSalaryInput] = useState<string>('');
+  const [maxSalaryInput, setMaxSalaryInput] = useState<string>('');
 
-  // const [languagesInput, setLanguagesInput] = useState<ProgLan[]>('' );
-
-
-  useEffect(() => {
-  }, [open]);
-  
   const jobs: Job[] = [{
     "company": "Google Inc",
     "minSalary": 2000,
@@ -62,18 +58,35 @@ function App() {
     "isRemote": false,
   }]
 
-  const getInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-  }
-
-
   const handleClickOpen = () => {
-    console.log("open2", open);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  
+  // TODO: Check if salary is a number
+  // TODO: Check if max salary is bigger than max salary
+  // TODO: Add button styling if error
+  const handleMinSalaryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const minSalary = e.target.value;
+    
+    // Handle validation
+
+    setMinSalaryInput(minSalary);
+  };
+
+  // TODO: Check if salary is a number
+  // TODO: Check if max salary is bigger than max salary
+  // TODO: Add button styling if error
+  const handleMaxSalaryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const maxSalary = e.target.value;
+  
+    // Handle validation
+  
+    setMaxSalaryInput(maxSalary);
   };
 
   // const [formats, setFormats] = useState(() => ['bold', 'italic']);
@@ -91,7 +104,7 @@ function App() {
     <AppBar position='static' style={{marginBottom: 30}}>
       <Toolbar>
         {/* <IconButton edge='start' color='inherit' aria-label='logo' ></IconButton> */}
-        <TextField fullWidth id="fullWidth" label="Search" variant="outlined" onChange={getInput}/> 
+        <TextField fullWidth id="fullWidth" label="Search" variant="outlined" onChange={(e) => setSearchInput(e.target.value)}/> 
         <IconButton style={{marginRight: 6}}>
           <SearchIcon/>
         </IconButton>
@@ -107,19 +120,32 @@ function App() {
     <JobsComponent jobs={jobs} searchInput={searchInput}/>
     
     {/* <TextField multiline variant="outlined" onChange={jobDescription}>Description...</TextField> */}
-      <Dialog aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" open={open} onClose={handleClose}>
-          <DialogTitle id="alert-dialog-title">{"Post a job"}</DialogTitle>
-          <form action='/' method='POST'>
-            <Stack spacing={4} width={400} margin={5}>
-              <TextField required variant='outlined' id="outlined-required" label="Job title" placeholder="Software developer" onChange={(e) => setJobTitleInput(e.target.value)} value={jobTitleInput}/>
-              <Select id="programming-language-select" label='Programming languages'>
-                {languages.map((lan, index) => <MenuItem key={index} value={lan}>{lan}</MenuItem>)}
-              </Select>
-              <TextField required fullWidth variant='outlined' rows={4} id="outlined-required" multiline  label="Job description" placeholder="Add the job description..." value={jobDescriptionInput} onChange={(e) => setJobDescriptionInput(e.target.value)}/>
-              <Button type='submit'>Create Post</Button>
-            </Stack>
-          </form>
-      </Dialog>
+    <Dialog aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" open={open} onClose={handleClose}>
+        <DialogTitle id="alert-dialog-title">{"Post a job"}</DialogTitle>
+        <form action='http://localhost:3005/jobs' method='POST'>
+          <Stack spacing={4} width={400} margin={5}>
+            <TextField required variant='outlined' id="outlined-required" label="Job title" placeholder="Software developer" onChange={(e) => setJobTitleInput(e.target.value)} value={jobTitleInput}/>
+            <Select id="programming-language-select" label='Programming languages'>
+              {languages.map((lan, index) => <MenuItem key={index} value={lan}>{lan}</MenuItem>)}
+            </Select>
+            <Select id="job-something" label='Job something'>
+              <MenuItem value="Presencial">Presencial</MenuItem>
+              <MenuItem value="Remote">Remote</MenuItem>
+              <MenuItem value="Hybrid">Hybrid</MenuItem>
+            </Select>
+            <span>
+              { /* TODO: add euro icon to TextField */ }
+              <TextField required variant='outlined' id="outlined-required" label="Minimum Salary" placeholder="xxx" onChange={handleMinSalaryInput} value={minSalaryInput}/>
+              <p> - </p>
+              { /* TODO: add euro icon to TextField */ }
+              <TextField required variant='outlined' id="outlined-required" label="Job title" placeholder="Software developer" onChange={handleMaxSalaryInput} value={maxSalaryInput}/>
+            </span> 
+
+            <TextField required fullWidth variant='outlined' rows={4} id="outlined-required" multiline  label="Job description" placeholder="Add the job description..." value={jobDescriptionInput} onChange={(e) => setJobDescriptionInput(e.target.value)}/>
+            <Button type='submit'>Create Post</Button>
+          </Stack>
+        </form>
+    </Dialog>
   </div>
   );
 }
