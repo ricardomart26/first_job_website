@@ -21,9 +21,9 @@ const JobsComponent = ({jobs, searchInput}: {jobs: Job[], searchInput: string}):
         return job.company.toLowerCase().includes(searchInput.toLowerCase());
     });
     
-    const jobsElement = filtered_jobs.map((job: Job) => {
+    const jobsElement = filtered_jobs.map((job: Job, index: number) => {
         return (
-            <Grid item xs={12}>
+            <Grid item xs={12} key={index}>
             <Card onClick={(event) => openJobDescription(event, job)}>
                 <CardActionArea>
                 <CardContent>

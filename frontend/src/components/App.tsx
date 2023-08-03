@@ -1,6 +1,6 @@
 
-import { AppBar, Button, IconButton, MenuItem, Select, TextField, Toolbar } from '@material-ui/core';
-import { Stack, ToggleButton, ToggleButtonGroup, Dialog } from '@mui/material';
+import { AppBar, Button, IconButton, InputAdornment, MenuItem, Select, TextField, Toolbar } from '@material-ui/core';
+import { Stack, ToggleButton, ToggleButtonGroup, Dialog, Alert } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import JobsComponent from './Jobs';
@@ -10,6 +10,8 @@ import { Job, ProgLan } from './interfaces';
 // import DialogContent from '@mui/material/DialogContent';
 // import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { grey } from '@material-ui/core/colors';
+import { Padding } from '@mui/icons-material';
 
 
 // import FormatBoldIcon from '@mui/icons-material/FormatBold';
@@ -26,8 +28,10 @@ function App() {
   const [languages, setLanguages] = useState<string[]>(["C", "Cpp", "Java", "Python", "Javascript", "Kotlin"]);
   const [jobTitleInput, setJobTitleInput] = useState<string>('');
   const [jobDescriptionInput, setJobDescriptionInput] = useState<string>('');
-  const [minSalaryInput, setMinSalaryInput] = useState<string>('');
-  const [maxSalaryInput, setMaxSalaryInput] = useState<string>('');
+  const [minSalaryInput, setMinSalaryInput] = useState<number>(0);
+  const [maxSalaryInput, setMaxSalaryInput] = useState<number>(0);
+  const [inputMaxSalaryError, setInputMaxSalaryError] = useState<boolean>(false);
+  const [inputMinSalaryError, setInputMinSalaryError] = useState<boolean>(false);
 
   const jobs: Job[] = [{
     "company": "Google Inc",
@@ -66,26 +70,79 @@ function App() {
     setOpen(false);
   };
 
+  useEffect(() => {
+
+  }, [inputMaxSalaryError, inputMinSalaryError]);
+
   
-  // TODO: Check if salary is a number
-  // TODO: Check if max salary is bigger than max salary
-  // TODO: Add button styling if error
+  // // TODO: Check if max salary is bigger than max salary
+  // const handleSalaryInput = (e: React.ChangeEvent<HTMLInputElement>, handleInput: Function) => {  
+
+  //   setInputMaxSalaryError(false);
+  //   setInputMinSalaryError(false);
+
+
+  //   if (Number.isNaN(e.target.value))
+  //     return ;
+    
+  //   handleInput(e.target.value);  
+    
+  //   console.log("current target: ", e.target.value);
+  //   console.log("Min salary: ", minSalaryInput);
+  //   console.log("Max salary: ", maxSalaryInput);
+
+  //   if (minSalaryInput > maxSalaryInput)
+  //   {
+  //     setInputMaxSalaryError(true);
+  //     setInputMinSalaryError(true);
+  //   }
+
+  //   // const salary: number = parseInt(e.target.value);
+
+  // }
+  
+
   const handleMinSalaryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const minSalary = e.target.value;
+    
+    if (Number.isNaN(e.target.value))
+    return ;
+    
+    setInputMaxSalaryError(false);    
+    setInputMinSalaryError(false);
+       
+    const minSalary: number = parseInt(e.target.value);
     
     // Handle validation
+    console.log(typeof(minSalary));
+    
+    if (minSalary >= maxSalaryInput)
+    {
+      setInputMinSalaryError(true);
+      setInputMaxSalaryError(true);
+    }
 
     setMinSalaryInput(minSalary);
   };
 
   // TODO: Check if salary is a number
   // TODO: Check if max salary is bigger than max salary
-  // TODO: Add button styling if error
   const handleMaxSalaryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const maxSalary = e.target.value;
-  
+    
+    if (Number.isNaN(e.target.value))
+    return ;
+    
+    setInputMaxSalaryError(false);    
+    setInputMinSalaryError(false);    
+    
+    const maxSalary: number = parseInt(e.target.value);
+
     // Handle validation
-  
+    if (maxSalary <= minSalaryInput)
+    {
+      setInputMinSalaryError(true);
+      setInputMaxSalaryError(true);
+    }
+      
     setMaxSalaryInput(maxSalary);
   };
 
@@ -125,23 +182,50 @@ function App() {
         <form action='http://localhost:3005/jobs' method='POST'>
           <Stack spacing={4} width={400} margin={5}>
             <TextField required variant='outlined' id="outlined-required" label="Job title" placeholder="Software developer" onChange={(e) => setJobTitleInput(e.target.value)} value={jobTitleInput}/>
-            <Select id="programming-language-select" label='Programming languages'>
+            <Select id="programming-language-select" label='Programming languages' value="C">
               {languages.map((lan, index) => <MenuItem key={index} value={lan}>{lan}</MenuItem>)}
             </Select>
-            <Select id="job-something" label='Job something'>
+            <Select id="job-something" label='Job something' value="Remote">
               <MenuItem value="Presencial">Presencial</MenuItem>
               <MenuItem value="Remote">Remote</MenuItem>
               <MenuItem value="Hybrid">Hybrid</MenuItem>
             </Select>
-            <span>
-              { /* TODO: add euro icon to TextField */ }
-              <TextField required variant='outlined' id="outlined-required" label="Minimum Salary" placeholder="xxx" onChange={handleMinSalaryInput} value={minSalaryInput}/>
-              <p> - </p>
-              { /* TODO: add euro icon to TextField */ }
-              <TextField required variant='outlined' id="outlined-required" label="Job title" placeholder="Software developer" onChange={handleMaxSalaryInput} value={maxSalaryInput}/>
-            </span> 
-
-            <TextField required fullWidth variant='outlined' rows={4} id="outlined-required" multiline  label="Job description" placeholder="Add the job description..." value={jobDescriptionInput} onChange={(e) => setJobDescriptionInput(e.target.value)}/>
+            <Stack direction={'row'} spacing={2}>
+              <TextField 
+                required 
+                variant='outlined'
+                id="outlined-required"
+                label="Minimum Salary" 
+                placeholder="xxx" 
+                onChange={handleMinSalaryInput} 
+                value={minSalaryInput ? minSalaryInput: ""}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+                inputProps={{
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
+                error={inputMinSalaryError}/>
+              <TextField 
+                required 
+                variant='outlined' 
+                id="outlined-required" 
+                label="Maximum salary" 
+                placeholder="xxx" 
+                onChange={handleMaxSalaryInput} 
+                value={maxSalaryInput ? maxSalaryInput : ""}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+                inputProps={{
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
+                error={inputMaxSalaryError}
+                />
+            </Stack>
+            <TextField required fullWidth variant='outlined' minRows={4} id="outlined-required" multiline  label="Job description" placeholder="Add the job description..." value={jobDescriptionInput} onChange={(e) => setJobDescriptionInput(e.target.value)}/>
             <Button type='submit'>Create Post</Button>
           </Stack>
         </form>
