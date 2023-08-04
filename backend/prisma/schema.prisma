@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  COMPANY
+}
+
+enum Languages {
+  C
+  Cpp
+  Java
+  Python
+  Javascript
+  Kotlin
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String?
+  role Role @default(USER)
+  jobsPosted JobPost[]
+}
+
+model JobPost {
+  id Int @id @default(autoincrement())
+  title String
+  minSalary Int
+  maxSalary Int
+  languages Languages[]
+  description String
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
